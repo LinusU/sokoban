@@ -22,8 +22,16 @@ class PathAnimator
     document.querySelector('head').removeChild @el
   reset: ->
     @obj.el.style.webkitAnimation = ''
-    @el.innerHTML = ''
   findPath: (sokoban, target) ->
+
+    if @obj.type is 'box'
+      path = []
+      delta = Math.abs (target.x - @obj.x) + (target.y - @obj.y)
+      dx = (target.x - @obj.x) / delta
+      dy = (target.y - @obj.y) / delta
+      for i in [0..delta]
+        path.push { x: @obj.x + dx * i, y: @obj.y + dy * i }
+      return path
 
     path = []
     next = []
@@ -36,7 +44,10 @@ class PathAnimator
         if sokoban.isSolid(x, y)
           return
         pathFrom[x + ',' + y] = obj
-        next.push { x: x, y: y }
+        if x is target.x and y is target.y
+          next = { length: 0, push: (-> ) }
+        else
+          next.push { x: x, y: y }
       while next.length
         iterate next.shift()
 
@@ -64,7 +75,7 @@ class PathAnimator
 
     path = @findPath sokoban, target
     rules = ['@-webkit-keyframes ' + @id + ' {']
-    console.log path
+
     if path.length <= 1
       throw new Error 'Path is too short'
 
