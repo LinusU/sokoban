@@ -81,10 +81,9 @@ h1
   pointer-events none
 
 #levels-list
-  column-width 160px
-  text-align center
   canvas
-    margin-bottom 22px
+    float left
+    margin 0 22px 22px
 
 #solved
   .success
@@ -146,3 +145,9 @@ h1
     color black
   100%
     color red
+
+@media all and (orientation: portrait)
+  #levels-list
+    canvas
+      margin 0 16px 22px
+
