@@ -1,0 +1,9 @@
+{
+  "name": "app-sokoban",
+  "version": "0.1.0",
+  "dependencies": {
+    "coffee-script": "~1.6.3",
+    "express": "~3.2.6",
+    "assman": "~0.1.4"
+  }
+}

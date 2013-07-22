@@ -1,0 +1,31 @@
+!!! 5
+//- html(manifest='/cache.mf')
+html
+  head
+    title Sokoban
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=1024, maximum-scale=1, user-scalable=no')
+    meta(name='apple-mobile-web-app-capable', content='yes')
+    meta(name='format-detection', content='telephone=no')
+    link(rel='stylesheet', type='text/css', href='/app.css')
+    style(type='text/css')#player-walk-animation
+    //- link(rel='apple-touch-icon', sizes='144x144', href='/touch-icon-144.png')
+  body
+
+    #menu
+      h1 Main menu
+      .btn(ontouchstart='newGame()') New game
+      .btn.update.hide(ontouchstart='location.reload()') Update app!
+
+    #main.hide
+      h1 Puzzle
+      .btn(ontouchstart='mainMenu()') Back
+      .btn(ontouchstart='undoMove()') Undo
+      #game
+
+    #solved.hide
+      h1 Puzzle solved
+      div.success ✔
+      div.btn(ontouchstart='mainMenu()') Continue
+
+    script(type='text/javascript', src='/app.js')

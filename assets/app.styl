@@ -1,0 +1,115 @@
+
+_triangle(size)
+  content ''
+  position absolute
+  top 0
+  width 0px
+  height 0px
+  border-style solid
+
+triangleAfter(size)
+  position relative unless @position
+  &:after
+    _triangle(size)
+    right -1 * size
+    border-width size size 0 0
+    border-color #ccc transparent transparent transparent
+
+triangleBefore(size)
+  position relative unless @position
+  &:before
+    _triangle(size)
+    left -1 * size
+    border-width 0 0 size size
+    border-color transparent transparent #ccc transparent
+
+html, body
+  margin 0
+  padding 0
+  user-select none
+  -webkit-tap-highlight-color rgba(0,0,0,0)
+
+body
+  font-family 'Gill Sans', sans-serif
+  position fixed
+  top 0
+  left 0
+  right 0
+  bottom 0
+  overflow hidden
+
+h1
+  background #ccc
+  margin 20px 0
+  padding 0 12px 0 20px
+  display inline-block
+  line-height 50px
+  clear both
+  triangleAfter(50px)
+
+.btn
+  width 130px
+  margin 0 0 20px
+  line-height 35px
+  background #ccc
+  text-align center
+  triangleAfter(35px)
+  triangleBefore(35px)
+
+.leftright
+  overflow hidden
+  .btn
+    float left
+    width 138px
+    margin 0 0 10px
+  .btn:nth-child(1)
+    margin-right 44px
+
+#main
+  h1, .btn
+    float left
+  .btn
+    margin 36px 0 0 56px
+
+#solved
+  .success
+    font-size 100pt
+    line-height 152px
+    height 140px
+    width 140px
+    margin 32px auto 64px
+    transform-origin 50% 50%
+    background linear-gradient(top, #1C2, #1A2)
+    text-align center
+    border-radius 80px
+    color white
+    box-shadow inset 0 8px 12px rgba(255,255,255,0.15), inset 0 -8px 12px rgba(0,0,0,0.15)
+    border 1px solid #394
+    -webkit-text-stroke 1px #394
+  .btn
+    float right
+
+#menu, #main, #solved
+  position absolute
+  top 0
+  left 0
+  width 100%
+  height 100%
+  overflow hidden
+  &.hide
+    pointer-events none
+    h1
+      transform translateX(-550px)
+    .btn
+      transform translateX(-1100px)
+    .success
+      transform scale(0)
+    #game
+      transform translateY(1000px)
+    // .leftright
+    //   .btn:nth-child(1)
+    //     transform translateX(-620px)
+    //   .btn:nth-child(2)
+    //     transform translateX(620px)
+  h1, .btn, .success, #game
+    transition transform 660ms
