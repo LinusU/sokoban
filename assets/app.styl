@@ -71,6 +71,21 @@ h1
   .btn
     margin 36px 0 0 56px
 
+#instructions
+  background url(/instructions.svg)
+  position absolute
+  right 0
+  bottom 0
+  width 750px
+  height 750px
+  pointer-events none
+
+#levels-list
+  column-width 160px
+  text-align center
+  canvas
+    margin-bottom 22px
+
 #solved
   .success
     font-size 100pt
@@ -89,7 +104,7 @@ h1
   .btn
     float right
 
-#menu, #main, #solved
+#menu, #main, #levels, #solved
   position absolute
   top 0
   left 0
@@ -104,12 +119,14 @@ h1
       transform translateX(-1100px)
     .success
       transform scale(0)
-    #game
+    #game, #levels-list
       transform translateY(1000px)
+    #instructions
+      transform translateX(1000px)
     // .leftright
     //   .btn:nth-child(1)
     //     transform translateX(-620px)
     //   .btn:nth-child(2)
     //     transform translateX(620px)
-  h1, .btn, .success, #game
+  h1, .btn, .success, #game, #levels-list, #instructions
     transition transform 660ms

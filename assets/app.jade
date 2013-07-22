@@ -4,7 +4,7 @@ html
   head
     title Sokoban
     meta(charset='utf-8')
-    meta(name='viewport', content='width=1024, maximum-scale=1, user-scalable=no')
+    meta(name='viewport', content='width=768, maximum-scale=1, user-scalable=no')
     meta(name='apple-mobile-web-app-capable', content='yes')
     meta(name='format-detection', content='telephone=no')
     link(rel='stylesheet', type='text/css', href='/app.css')
@@ -14,14 +14,23 @@ html
 
     #menu
       h1 Main menu
-      .btn(ontouchstart='newGame()') New game
+      .btn(ontouchstart='showLevels(0)') Training
+      .btn(ontouchstart='showLevels(1)') Beginner
+      .btn(ontouchstart='showLevels(2)') Intermediate
+      .btn(ontouchstart='showLevels(3)') Advanced
       .btn.update.hide(ontouchstart='location.reload()') Update app!
+      #instructions
 
     #main.hide
       h1 Puzzle
       .btn(ontouchstart='mainMenu()') Back
       .btn(ontouchstart='undoMove()') Undo
       #game
+
+    #levels.hide
+      h1 Select level
+      .btn(ontouchstart='mainMenu()') Back
+      #levels-list
 
     #solved.hide
       h1 Puzzle solved

@@ -1,116 +1,4 @@
 
-LEVELS = [
-  """
-   #####
-   #@ .#
-   # $ #
-   ## ##
-    # #
-  ### ###
-  #     #
-  # # # #
-  #     #
-  #######
-  """
-  """
-   ####
-   #..##
-   #...#
-   # $ ##
-   #$ $ #
-  ## $# #
-  # $ # #
-  #     #
-  ### ###
-    #@#
-    ###
-  """
-  """
-      #####
-      #   #
-      #$  #
-    ###  $###
-    #  $  $ #
-  ### # ### #   ######
-  #   # ### #####  ..#
-  # $  $           ..#
-  ##### #### #@##  ..#
-      #      #########
-      ########
-  """
-  """
-    ############
-    #    #     #
-    # $  $ $ $ #
-  ###### ##$ $ #
-  #..  # #  $ ##
-  #..   @  ##  #
-  #..  #$####  #
-  #..  # $  $  #
-  #..  #     ###
-  ############
-  """
-  """
-  ######  ###
-  #..  # ##@##
-  #..  ###   #
-  #..     $$ #
-  #..  # # $ #
-  #..### # $ #
-  #### $ #$  #
-     #  $# $ #
-     # $  $  #
-     #  ##   #
-     #########
-  """
-  """
-   ####
-   #@ #######
-   #  $     #
-   #$ ##$   #
-   # #...#$##
-   #  ...$ #
-  ## #. .# #
-  # $# #   #
-  #    $  $#
-  #######  #
-        ####
-  """
-  """
-     #####
-     # @ #
-     # # #
-  #### # #
-  #.  $  #
-  ## #$####
-  #.  $  .#
-  ####$# ##
-  #.  $  .#
-  ## #$# ##
-   # # # #
-   #  .  #
-   #######
-  """
-  """
-            ####
-  ###########  #
-  # $ $   $    #
-  #  $  # $ #$ #
-  #    #  $ $  #
-  # ####  # #$ ###
-  #   ##  $ $ $#@#
-  # #   #$# $    #
-  # $ $ $    $   #
-  #########  #####
-        #      #
-        #      #
-        #......#
-        #......#
-        #......#
-        ########
-  """
-]
-
 S = 40
 
 forPos = (obj, fn) ->
@@ -147,13 +35,13 @@ class Sokoban
     @el.classList.add 'sokoban'
     @map = null
     @board = null
-    @loadMap 0
   nextMap: ->
-    if LEVELS[@currentMapId + 1]
-      @loadMap @currentMapId + 1
+    if window.fetchLevel @currentSetId, @currentMapId + 1
+      @loadMap @currentSetId, @currentMapId + 1
     else
       window.showSolved()
-  loadMap: (id) ->
+  loadMap: (set, id) ->
+    @currentSetId = set
     @currentMapId = id
     @destroy()
     @board = document.createElement 'div'
@@ -163,7 +51,7 @@ class Sokoban
     @touch = []
     @undos = []
     @mode = 'wait'
-    @map = LEVELS[id].split('\n').map (row, y) =>
+    @map = window.fetchLevel(@currentSetId, id).split('\n').map (row, y) =>
       row.split('').map (cell, x) =>
         switch cell
           when ' '
@@ -178,6 +66,7 @@ class Sokoban
             [ new Block @, 'goal', x, y ]
           when '*'
             box = new Block @, 'box', x, y
+            box.el.classList.add 'in-goal'
             @boxes.push box
             [
               new Block @, 'goal', x, y

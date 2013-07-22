@@ -4,11 +4,12 @@ express = require 'express'
 
 assman.top __dirname
 
-assman.register 'js', 'app', [ 'assets/path-animator.coffee', 'assets/sokoban.coffee', 'assets/app.coffee' ]
+assman.register 'js', 'app', [ 'assets/levels.coffee', 'assets/path-animator.coffee', 'assets/sokoban.coffee', 'assets/app.coffee' ]
 assman.register 'css', 'app', [ 'assets/sokoban.styl', 'assets/app.styl' ]
 assman.register 'html', 'app', [ 'assets/app.jade' ]
 
 assman.register 'svg', 'sprites', [ 'assets/sprites.svg' ]
+assman.register 'svg', 'instructions', [ 'assets/instructions.svg' ]
 assman.register 'jpg', 'background', [ 'assets/background.jpg' ]
 
 app = express()
