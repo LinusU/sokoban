@@ -7,6 +7,12 @@ window.instance = instance
 document.body.addEventListener 'touchmove', (e) ->
   e.preventDefault()
 
+window.addEventListener 'load', ->
+  window.applicationCache.addEventListener 'updateready', ->
+    if window.applicationCache.status is window.applicationCache.UPDATEREADY
+      window.applicationCache.swapCache()
+      document.querySelector('.btn.update').classList.remove 'hide'
+
 showScene = (scene) ->
   document.getElementById('menu').classList.add 'hide'
   document.getElementById('main').classList.add 'hide'

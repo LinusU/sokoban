@@ -130,3 +130,17 @@ h1
     //     transform translateX(620px)
   h1, .btn, .success, #game, #levels-list, #instructions
     transition transform 660ms
+
+.btn.update
+  animation blink 550ms infinite
+  animation-direction alternate
+  animation-timing-function linear
+  transition transform 330ms
+  &.hide
+    transform translateX(-300px)
+
+@keyframes blink
+  0%
+    color black
+  100%
+    color red
