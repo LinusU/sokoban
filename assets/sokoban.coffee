@@ -35,6 +35,8 @@ class Sokoban
     @el.classList.add 'sokoban'
     @map = null
     @board = null
+  reloadMap: ->
+    @loadMap @currentSetId, @currentMapId
   nextMap: ->
     if window.fetchLevel @currentSetId, @currentMapId + 1
       @loadMap @currentSetId, @currentMapId + 1

@@ -31,6 +31,9 @@ window.newGame = (set, lvl) ->
 window.undoMove = ->
   instance.undo()
 
+window.resetLevel = ->
+  instance.reloadMap()
+
 window.showSolved = ->
   showScene 'solved'
 
