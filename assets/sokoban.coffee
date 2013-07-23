@@ -19,10 +19,11 @@ class Block
     @parent.board.appendChild @el
     @anim = (if @canMove() then new PathAnimator @ else null)
   moveTo: (x, y, cb) ->
-    @anim.walk @parent, { x: x, y: y }, ->
+    ret = @anim.walk @parent, { x: x, y: y }, ->
       if cb then do cb
     @x = x
     @y = y
+    return ret
   canMove: ->
     @type in ['box', 'player']
   isSolid: ->
@@ -49,6 +50,7 @@ class Sokoban
     @board = document.createElement 'div'
     @board.className = 'board'
     @el.appendChild @board
+    @moves = 0
     @boxes = []
     @touch = []
     @undos = []
@@ -106,6 +108,7 @@ class Sokoban
     if @undos.length and @mode isnt 'wait'
       val = @undos.pop()
       @setMode 'wait'
+      @moves = val.moves
       @moveTo @player, val.player.x, val.player.y
       @moveTo val.block.instance, val.block.x, val.block.y, =>
         @setMode 'select'
@@ -137,7 +140,7 @@ class Sokoban
     pos = @map[obj.y][obj.x]
     pos.splice(pos.indexOf(obj))
 
-    obj.moveTo x, y, cb
+    ret = obj.moveTo x, y, cb
 
     pos = @map[y][x]
     pos.push obj
@@ -147,6 +150,8 @@ class Sokoban
         obj.el.classList.add 'in-goal'
       else
         obj.el.classList.remove 'in-goal'
+
+    return ret
 
   handleTouch: (e) ->
 
@@ -161,11 +166,12 @@ class Sokoban
           @undos.push {
             player: { x: @player.x, y: @player.y }
             block: { instance: @target, x: @target.x, y: @target.y }
+            moves: @moves
           }
-          @moveTo @target, e.x, e.y
+          @moves += @moveTo @target, e.x, e.y
           @moveTo @player, e.x + e.dx, e.y + e.dy, =>
             if @isFinished()
-              @nextMap()
+              window.showStats @moves
             else
               @setMode 'select'
         @setMode 'wait'

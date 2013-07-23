@@ -16,6 +16,7 @@ window.addEventListener 'load', ->
 showScene = (scene) ->
   document.getElementById('menu').classList.add 'hide'
   document.getElementById('main').classList.add 'hide'
+  document.getElementById('stats').classList.add 'hide'
   document.getElementById('levels').classList.add 'hide'
   document.getElementById('solved').classList.add 'hide'
   setTimeout ->
@@ -36,6 +37,16 @@ window.resetLevel = ->
 
 window.showSolved = ->
   showScene 'solved'
+
+window.showStats = (moves) ->
+  el = document.getElementById 'stats'
+  el.classList.remove 'hide'
+  el.querySelector('p').innerText = moves + ' pushes'
+
+window.nextLevel = ->
+  el = document.getElementById 'stats'
+  el.classList.add 'hide'
+  instance.nextMap()
 
 window.showLevels = (set) ->
 

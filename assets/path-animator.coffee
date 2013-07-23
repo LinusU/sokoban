@@ -94,9 +94,9 @@ class PathAnimator
       when 6 then 320
       else 340
 
-    stop = path.pop()
-
     @obj.el.style.webkitAnimation = @id + ' ' + time + 'ms linear 0 1'
-    @obj.el.style.webkitTransform = 'translate(' + (stop.x * S) + 'px, ' + (stop.y * S) + 'px)'
+    @obj.el.style.webkitTransform = 'translate(' + (target.x * S) + 'px, ' + (target.y * S) + 'px)'
+
+    return (path.length - 1)
 
 window.PathAnimator = PathAnimator

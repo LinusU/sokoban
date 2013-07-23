@@ -36,4 +36,12 @@ html(manifest='/cache.mf')
       div.success ✔
       div.btn(ontouchstart='mainMenu()') Continue
 
+    #stats.hide
+      .box
+        h1 Level finished
+        p
+        .leftright
+          .btn(ontouchstart='mainMenu()') Menu
+          .btn(ontouchstart='nextLevel()') Next
+
     script(type='text/javascript', src='/app.js')
