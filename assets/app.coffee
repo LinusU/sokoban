@@ -1,5 +1,5 @@
 
-window.hasTouchSupport = ('ontouchmove' in document)
+window.hasTouchSupport = ('ontouchmove' of document)
 
 instance = new Sokoban(document.getElementById('game'))
 
