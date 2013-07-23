@@ -1,11 +1,17 @@
 
+window.hasTouchSupport = ('ontouchmove' in document)
+
 instance = new Sokoban(document.getElementById('game'))
 
 # For debugging only
 window.instance = instance
 
-document.body.addEventListener 'touchmove', (e) ->
-  e.preventDefault()
+if hasTouchSupport
+  document.body.addEventListener 'touchmove', (e) ->
+    e.preventDefault()
+else
+  for e in document.querySelectorAll('[ontouchstart]')
+    e.setAttribute 'onclick', e.getAttribute 'ontouchstart'
 
 window.addEventListener 'load', ->
   window.applicationCache.addEventListener 'updateready', ->
@@ -81,7 +87,7 @@ window.showLevels = (set) ->
     canvas
 
   images.forEach (e, lvl) ->
-    e.addEventListener 'touchstart', -> window.newGame set, lvl
+    e.addEventListener (if hasTouchSupport then 'touchstart' else 'click'), -> window.newGame set, lvl
     document.getElementById('levels-list').appendChild e
 
 

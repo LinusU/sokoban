@@ -192,7 +192,7 @@ class Sokoban
       el = document.createElement 'div'
       el.className = 'touch'
       el.style.webkitTransform = 'translate(' + (e.x * S) + 'px, ' + (e.y * S) + 'px)'
-      el.addEventListener 'touchstart', => @handleTouch e
+      el.addEventListener (if hasTouchSupport then 'touchstart' else 'click'), => @handleTouch e
 
       @board.appendChild el
       return el
