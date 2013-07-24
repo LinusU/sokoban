@@ -43,9 +43,36 @@ class Sokoban
       @loadMap @currentSetId, @currentMapId + 1
     else
       window.showSolved()
-  loadMap: (set, id) ->
-    @currentSetId = set
-    @currentMapId = id
+  deflate: ->
+    deflateCell = (e) ->
+      switch e.length
+        when 0 then return ' '
+        when 1
+          switch e[0].type
+            when 'floor' then return ' '
+            when 'wall' then return '#'
+        when 2
+          switch e[1].type
+            when 'box' then return '$'
+            when 'goal' then return '.'
+            when 'player' then return '@'
+        when 3
+          if e[1].type is 'goal' and e[2].type is 'player' then return '+'
+          if e[1].type is 'goal' and e[2].type is 'box' then return '*'
+      throw new Error 'Unknown cell: ' + JSON.stringify e
+    data = @map.map((e) -> e.map(deflateCell).join('')).join '\n'
+    # FIXME: undos
+    return { data: data, moves: @moves, setId: @currentSetId, mapId: @currentMapId } # , undos: @undos
+  inflate: (obj) ->
+    @loadData obj.data
+    @moves = obj.moves
+    @currentSetId = obj.setId
+    @currentMapId = obj.mapId
+    # FIXME: undos
+    # @undos = obj.undos
+  loadMap: (@currentSetId, @currentMapId) ->
+    @loadData window.fetchLevel @currentSetId, @currentMapId
+  loadData: (data) ->
     @destroy()
     @board = document.createElement 'div'
     @board.className = 'board'
@@ -55,7 +82,7 @@ class Sokoban
     @touch = []
     @undos = []
     @mode = 'wait'
-    @map = window.fetchLevel(@currentSetId, id).split('\n').map (row, y) =>
+    @map = data.split('\n').map (row, y) =>
       row.split('').map (cell, x) =>
         switch cell
           when ' '
@@ -173,6 +200,7 @@ class Sokoban
             if @isFinished()
               window.showStats @moves
             else
+              window.saveCurrentGame()
               @setMode 'select'
         @setMode 'wait'
         if @player.x is (@target.x + e.dx) and @player.y is (@target.y + e.dy)
@@ -182,6 +210,7 @@ class Sokoban
       when 'walk'
         @setMode 'wait'
         @moveTo @player, e.x, e.y, =>
+          window.saveCurrentGame()
           @setMode 'select'
 
   setMode: (@mode) ->

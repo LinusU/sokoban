@@ -28,7 +28,22 @@ showScene = (scene) ->
   setTimeout ->
     document.getElementById(scene).classList.remove 'hide'
 
+updateContinueButton = ->
+  if localStorage.getItem 'current-game'
+    document.querySelector('.btn.continue').classList.remove 'hide'
+  else
+    document.querySelector('.btn.continue').classList.add 'hide'
+
+window.continueGame = ->
+  cg = localStorage.getItem 'current-game'
+  instance.inflate JSON.parse cg
+  showScene 'main'
+
+window.saveCurrentGame = ->
+  localStorage.setItem 'current-game', JSON.stringify instance.deflate()
+
 window.mainMenu = ->
+  updateContinueButton()
   showScene 'menu'
 
 window.newGame = (set, lvl) ->
@@ -45,6 +60,7 @@ window.showSolved = ->
   showScene 'solved'
 
 window.showStats = (moves) ->
+  localStorage.removeItem 'current-game'
   el = document.getElementById 'stats'
   el.classList.remove 'hide'
   el.querySelector('p').innerText = moves + ' pushes'
@@ -90,4 +106,4 @@ window.showLevels = (set) ->
     e.addEventListener (if hasTouchSupport then 'touchstart' else 'click'), -> window.newGame set, lvl
     document.getElementById('levels-list').appendChild e
 
-
+updateContinueButton()
