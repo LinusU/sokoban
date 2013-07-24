@@ -88,9 +88,27 @@ h1
   pointer-events none
 
 #levels-list
-  canvas
+  .level
+    position relative
     float left
     margin 0 22px 22px
+    canvas
+      display block
+    &.locked canvas
+      border-radius 8px
+    &.locked:before
+      content ''
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      background-color rgba(0,0,0, 0.8)
+      background-repeat no-repeat
+      background-position center center
+      background-image url(/locked.svg)
+      background-size auto 80px
+      border-radius 8px
 
 #solved
   .success

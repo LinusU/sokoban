@@ -198,6 +198,7 @@ class Sokoban
           @moves += @moveTo @target, e.x, e.y
           @moveTo @player, e.x + e.dx, e.y + e.dy, =>
             if @isFinished()
+              window.markLevelCompleted @currentSetId, @currentMapId
               window.showStats @moves
             else
               window.saveCurrentGame()

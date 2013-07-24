@@ -8,6 +8,7 @@ assman.register 'js', 'app', [ 'assets/levels.coffee', 'assets/path-animator.cof
 assman.register 'css', 'app', [ 'assets/sokoban.styl', 'assets/app.styl' ]
 assman.register 'html', 'app', [ 'assets/app.jade' ]
 
+assman.register 'svg', 'locked', [ 'assets/locked.svg' ]
 assman.register 'svg', 'sprites', [ 'assets/sprites.svg' ]
 assman.register 'svg', 'instructions', [ 'assets/instructions.svg' ]
 
@@ -40,6 +41,7 @@ app.get '/cache.mf', (req, res) ->
     /app.css
     /app.html
     # SVG
+    /locked.svg
     /sprites.svg
     /instructions.svg
     # Background

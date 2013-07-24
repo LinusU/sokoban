@@ -70,6 +70,11 @@ window.nextLevel = ->
   el.classList.add 'hide'
   instance.nextMap()
 
+window.markLevelCompleted = (set, map) ->
+  key = 'complete-' + set
+  val = parseInt(localStorage.getItem(key)) || 0
+  localStorage.setItem key, Math.max val, (map + 1)
+
 window.showLevels = (set) ->
 
   document.getElementById('levels-list').innerHTML = ''
@@ -78,8 +83,9 @@ window.showLevels = (set) ->
 
   size = 8
   list = window.fetchLevelSet set
+  lock = parseInt(localStorage.getItem('complete-' + set)) || 0
 
-  images = list.map (e) ->
+  list.forEach (e, lvl) ->
     rows = e.split '\n'
     canvas = document.createElement 'canvas'
     w = rows.reduce ((p, c) -> Math.max(p, c.length)), 0
@@ -100,10 +106,13 @@ window.showLevels = (set) ->
           when '+' then ctx.fillStyle = 'blue'
           when '.' then ctx.fillStyle = 'yellow'
         ctx.fillRect x, y, 1, 1
-    canvas
-
-  images.forEach (e, lvl) ->
-    e.addEventListener (if hasTouchSupport then 'touchstart' else 'click'), -> window.newGame set, lvl
-    document.getElementById('levels-list').appendChild e
+    div = document.createElement 'div'
+    div.className = 'level'
+    div.appendChild canvas
+    if lvl <= lock
+      div.addEventListener (if hasTouchSupport then 'touchstart' else 'click'), -> window.newGame set, lvl
+    else
+      div.classList.add 'locked'
+    document.getElementById('levels-list').appendChild div
 
 updateContinueButton()
