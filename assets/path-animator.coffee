@@ -22,16 +22,9 @@ class PathAnimator
     document.querySelector('head').removeChild @el
   reset: ->
     @obj.el.style.webkitAnimation = ''
+    if @box
+      @box.el.style.webkitAnimation = ''
   findPath: (sokoban, target) ->
-
-    if @obj.type is 'box'
-      path = []
-      delta = Math.abs (target.x - @obj.x) + (target.y - @obj.y)
-      dx = (target.x - @obj.x) / delta
-      dy = (target.y - @obj.y) / delta
-      for i in [0..delta]
-        path.push { x: @obj.x + dx * i, y: @obj.y + dy * i }
-      return path
 
     path = []
     next = []
@@ -71,10 +64,17 @@ class PathAnimator
 
       return false
 
-  walk: (sokoban, target, @cb) ->
+  walk: (sokoban, target, push, @cb) ->
 
-    path = @findPath sokoban, target
     rules = ['@-webkit-keyframes ' + @id + ' {']
+
+    if push
+      delta = Math.abs (target.x - @obj.x) + (target.y - @obj.y)
+      dx = (target.x - @obj.x) / delta
+      dy = (target.y - @obj.y) / delta
+      path = [0..delta].map (i) => { x: @obj.x + dx * i, y: @obj.y + dy * i }
+    else
+      path = @findPath sokoban, target
 
     if path.length <= 1
       throw new Error 'Path is too short'
@@ -83,6 +83,15 @@ class PathAnimator
       rules.push '  ' + ((i / (path.length - 1)) * 100) + '% { -webkit-transform: translate(' + (p.x * S) + 'px, ' + (p.y * S) + 'px) }'
 
     rules.push '}'
+
+    if push
+      @box = push.box
+      dx = @box.x - @obj.x
+      dy = @box.y - @obj.y
+      rules.push '@-webkit-keyframes ' + @id + '-box {'
+      rules.push '0% { -webkit-transform: translate(' + (push.orig.x * S) + 'px, ' + (push.orig.y * S) + 'px) }'
+      rules.push '100% { -webkit-transform: translate(' + (push.x * S) + 'px, ' + (push.y * S) + 'px) }'
+      rules.push '}'
 
     @el.innerHTML = rules.join '\n'
 
@@ -96,6 +105,10 @@ class PathAnimator
 
     @obj.el.style.webkitAnimation = @id + ' ' + time + 'ms linear 0 1'
     @obj.el.style.webkitTransform = 'translate(' + (target.x * S) + 'px, ' + (target.y * S) + 'px)'
+
+    if push
+      @box.el.style.webkitAnimation = @id + '-box ' + time + 'ms linear 0 1'
+      @box.el.style.webkitTransform = 'translate(' + (push.x * S) + 'px, ' + (push.y * S) + 'px)'
 
     return (path.length - 1)
 

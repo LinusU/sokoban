@@ -17,24 +17,14 @@ class Block
     @el.className = 'block block-' + @type
     @el.style.webkitTransform = 'translate(' + (@x * S) + 'px, ' + (@y * S) + 'px)'
     @parent.board.appendChild @el
-    @anim = (if @canMove() then new PathAnimator @ else null)
-  moveTo: (x, y, cb) ->
-    ret = @anim.walk @parent, { x: x, y: y }, ->
-      if cb then do cb
-    @x = x
-    @y = y
-    return ret
-  canMove: ->
-    @type in ['box', 'player']
   isSolid: ->
     @type in ['box', 'wall', 'player']
-  destroy: ->
-    if @anim then @anim.destroy()
 
 class Sokoban
   constructor: (@el) ->
     @el.classList.add 'sokoban'
     @map = null
+    @anim = null
     @board = null
   reloadMap: ->
     @loadMap @currentSetId, @currentMapId
@@ -105,6 +95,7 @@ class Sokoban
             ]
           when '@'
             @player = new Block @, 'player', x, y
+            @anim = new PathAnimator @player
             [ @player ]
           when '+'
             goal = new Block @, 'goal', x, y
@@ -125,9 +116,7 @@ class Sokoban
     @setMode 'select'
 
   destroy: ->
-    if @map
-      @map.forEach (e) -> e.forEach (e) -> e.forEach (e) -> e.destroy()
-      @map = null
+    @map = null
     if @board
       @el.removeChild @board
       @board = null
@@ -136,9 +125,17 @@ class Sokoban
       val = @undos.pop()
       @setMode 'wait'
       @moves = val.moves
-      @moveTo @player, val.player.x, val.player.y
-      @moveTo val.block.instance, val.block.x, val.block.y, =>
-        @setMode 'select'
+      doThePush = =>
+        push =
+          box: val.block.instance
+          x: val.block.x
+          y: val.block.y
+        @moveTo @player, val.player.x, val.player.y, push, =>
+          @setMode 'select'
+      if @player.x is val.player.tx and @player.y is val.player.ty
+        doThePush()
+      else
+        @moveTo @player, val.player.tx, val.player.ty, null, doThePush
   get: (x, y) ->
     try
       @map[y][x]
@@ -157,17 +154,23 @@ class Sokoban
   isFinished: ->
     @el.querySelector('.block-box:not(.in-goal)') is null
   isSolid: (x, y) ->
-    blocks = @get x, y
-    for b in blocks
-      if b.isSolid()
-        return true
-    return false
-  moveTo: (obj, x, y, cb) ->
+    @get(x, y).reduce ((p, c) -> p || c.isSolid()), false
+  hasType: (x, y, type) ->
+    @get(x, y).reduce ((p, c) -> p || (c.type is type)), false
+  moveTo: (obj, x, y, push, cb) ->
+
+    if push
+      push.orig = { x: push.box.x, y: push.box.y }
+      @moveTo push.box, push.x, push.y, null, null
 
     pos = @map[obj.y][obj.x]
-    pos.splice(pos.indexOf(obj))
+    pos.splice pos.indexOf(obj), 1
 
-    ret = obj.moveTo x, y, cb
+    if obj.type is 'player'
+      @anim.walk @, { x: x, y: y }, push, cb
+
+    obj.x = x
+    obj.y = y
 
     pos = @map[y][x]
     pos.push obj
@@ -177,8 +180,6 @@ class Sokoban
         obj.el.classList.add 'in-goal'
       else
         obj.el.classList.remove 'in-goal'
-
-    return ret
 
   handleTouch: (e) ->
 
@@ -191,12 +192,16 @@ class Sokoban
       when 'push'
         doThePush = =>
           @undos.push {
-            player: { x: @player.x, y: @player.y }
+            player: { x: @player.x, y: @player.y, tx: e.x + e.dx, ty: e.y + e.dy }
             block: { instance: @target, x: @target.x, y: @target.y }
             moves: @moves
           }
-          @moves += @moveTo @target, e.x, e.y
-          @moveTo @player, e.x + e.dx, e.y + e.dy, =>
+          @moves += Math.abs (@target.x - e.x) + (@target.y - e.y)
+          push =
+            box: @target
+            x: e.x
+            y: e.y
+          @moveTo @player, e.x + e.dx, e.y + e.dy, push, =>
             if @isFinished()
               window.markLevelCompleted @currentSetId, @currentMapId
               window.showStats @moves
@@ -207,10 +212,10 @@ class Sokoban
         if @player.x is (@target.x + e.dx) and @player.y is (@target.y + e.dy)
           doThePush()
         else
-          @moveTo @player, @target.x + e.dx, @target.y + e.dy, doThePush
+          @moveTo @player, @target.x + e.dx, @target.y + e.dy, null, doThePush
       when 'walk'
         @setMode 'wait'
-        @moveTo @player, e.x, e.y, =>
+        @moveTo @player, e.x, e.y, null, =>
           window.saveCurrentGame()
           @setMode 'select'
 
@@ -330,5 +335,23 @@ class Sokoban
 
       else
         throw new Error 'Unknown mode:', @mode
+
+  findPossiblePushesInGoal: (x, y, px, py) ->
+
+    ret = []
+    next = [[x, y]]
+    done = {}
+
+
+
+    iterate = (x, y) ->
+      forDelta (dx, dy) ->
+        xx = x + dx
+        yy = y + dy
+
+    iterate x, y
+
+    return ret
+
 
 window.Sokoban = Sokoban
