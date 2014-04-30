@@ -100,6 +100,7 @@ class Sokoban
           when '+'
             goal = new Block @, 'goal', x, y
             @player = new Block @, 'player', x, y
+            @anim = new PathAnimator @player
             [ goal, @player ]
           else
             throw new Error 'Unknown block type'
